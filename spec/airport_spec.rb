@@ -13,20 +13,23 @@ require 'airport'
 
 describe Airport do
 
-  let (:plane) { Plane.new }
+  let(:plane) { double :plane, land: nil, take_off: nil }
 
   it 'has a default capacity' do
     expect(subject.capacity).to eq Airport::DEFAULT_CAPACITY
   end
 
   describe 'take off' do
-    it 'instructs a plane to take off if sunny' do
+
+    before do
       allow(subject).to receive(:weather) { 'sunny' }
+    end
+
+    it 'instructs a plane to take off if sunny' do
       expect(subject).to respond_to :take_off
     end
 
-    it 'releases a plane if sunny'do
-      allow(subject).to receive(:weather) { 'sunny' }
+    it 'releases a plane' do # assume normal conditions with test descriptions unless you're explicitly testing exception circumstances. Why? Less mental clutter for reader
       subject.land(plane)
       subject.take_off(plane)
       expect(subject.planes.count).to eq 0
@@ -34,23 +37,34 @@ describe Airport do
   end
 
   describe 'landing' do
+
     it 'instructs a plane to land if sunny' do
-      allow(subject).to receive(:weather) { 'sunny' }
-      expect(subject).to respond_to :land
+      allow(subject).to receive(:weather) { 'sunny' } # refactor to before block as above
+      # EXPECTATION ABOUT THE FUTURE
+      expect(plane).to receive :land
+      
+      # ACTION
+      subject.land plane
     end
 
     it 'receives a plane if sunny' do
       allow(subject).to receive(:weather) { 'sunny' }
+
       subject.land(plane)
-      expect(subject.planes.count).to eq 1
+
+      expect(subject.plane_count).to eq 1
     end
   end
 
   describe 'traffic control' do
+
     context 'when airport is full' do
+
       it 'does not allow a plane to land'do
         allow(subject).to receive(:weather) { 'sunny' }
+
         subject.capacity.times { subject.land(plane) }
+
         expect{ subject.land(plane) }.to raise_error 'The airport is full!'
       end
 
@@ -89,7 +103,7 @@ describe Airport do
       it 'Does not allow a plane into the airport while stormy' do
         allow(subject).to receive(:weather) { 'stormy' }
         expect { subject.land(plane) }.to raise_error 'Can\'t land during a storm!'
-        expect(subject.planes.count).to eq 0
+        expect(subject.planes.count).to eq 0 # use plane_count
       end
     end
   end

@@ -1,28 +1,24 @@
-class Plane
-
-  attr_accessor :landing
+class Plane # refactored with attr_accessor and using a single instance variable to store whether a plane is landed or flying
+  attr_accessor :flying
 
   def initialize
-    @flying = true
-    @landed = false
+    self.flying = true
   end
 
   def land
-    @landed = true
-    @flying = false
+    self.flying = false
   end
 
   def take_off
-    @flying = true
-    @landed = false
+    self.flying = true
   end
 
   def flying?
-    @flying
+    flying
   end
 
   def landed?
-    @landed
+    !flying
   end
 
 end

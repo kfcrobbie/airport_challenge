@@ -24,9 +24,7 @@ describe Plane do
     expect(subject).to be_flying
   end
 
-  it { expect(subject).to respond_to :landing }
-
-  it 'is landed after landing' do
+  it 'is landed after landing' do # reorganize as we did below
     subject.land
     expect(subject).to be_landed
   end
@@ -36,16 +34,16 @@ describe Plane do
     expect(subject).not_to be_flying
   end
 
-  it { expect(subject).to respond_to :take_off }
+  describe '#take_off' do # in unit tests, group tests related to the same method together with a describe block
 
-  it 'is flying after take off' do
-    subject.take_off
-    expect(subject).to be_flying
+    specify 'is flying after take off' do
+      subject.take_off
+      expect(subject).to be_flying
+    end
+
+    specify 'is not landed after take off' do
+      subject.take_off
+      expect(subject).not_to be_landed
+    end
   end
-
-  it 'is not landed after take off' do
-    subject.take_off
-    expect(subject).not_to be_landed
-  end
-
 end
